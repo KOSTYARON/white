@@ -42,9 +42,9 @@
 		limit = MAX_BLOODCHARGE
 	if(spells.len >= limit)
 		if(rune)
-			to_chat(owner, span_cultitalic("Ты не можешь хранить более [MAX_BLOODCHARGE] заклинаний. <b>Выбери заклинание для удаления.</b>"))
+			to_chat(owner, span_cultitalic("Не могу хранить более [MAX_BLOODCHARGE] заклинаний. <b>Выбери заклинание для удаления.</b>"))
 		else
-			to_chat(owner, span_cultitalic("<b><u>Ты не можешь хранить более [RUNELESS_MAX_BLOODCHARGE] заклинаний без руны усиления! Выбери заклинание для удаления.</b></u>"))
+			to_chat(owner, span_cultitalic("<b><u>Не могу хранить более [RUNELESS_MAX_BLOODCHARGE] заклинаний без руны усиления! Выбери заклинание для удаления.</b></u>"))
 		var/nullify_spell = input(owner, "Выбери заклинание для удаления.", "Текущие заклинания") as null|anything in spells
 		if(nullify_spell)
 			qdel(nullify_spell)
@@ -66,7 +66,7 @@
 	BS = possible_spells[entered_spell_name]
 	if(QDELETED(src) || owner.incapacitated() || !BS || (rune && !(locate(/obj/effect/rune/empower) in range(1, owner))) || (spells.len >= limit))
 		return
-	to_chat(owner,span_warning("Начинаю вырезать внеземные символы на своей плоти!"))
+	to_chat(owner,span_warning("Начинаю вырезать странные символы на своей плоти!"))
 	SEND_SOUND(owner, sound('sound/weapons/slice.ogg',0,1,10))
 	if(!channeling)
 		channeling = TRUE
@@ -161,7 +161,7 @@
 /datum/action/innate/cult/blood_spell/emp/Activate()
 	owner.whisper(invocation, language = /datum/language/common)
 	owner.visible_message(span_warning("Рука [owner] вспыхивает ярко-синим цветом!") , \
-		span_cultitalic("Произношу заклятие, чтобы вызвать ЭМИ из своей руки."))
+		span_cultitalic("Произношу заклятие, вызывая ЭМИ из своей руки."))
 	empulse(owner, 2, 5)
 	charges--
 	if(charges<=0)
@@ -169,13 +169,13 @@
 
 /datum/action/innate/cult/blood_spell/shackles
 	name = "Теневые кандалы"
-	desc = "Заряжает твою руку магией, позволяющей заковать жертву в наручники."
+	desc = "Заряжает твою руку магией, позволяющей заковать жертву в наручники и заставить замолкнуть, если получится заковать."
 	button_icon_state = "cuff"
 	charges = 4
 	magic_path = "/obj/item/melee/blood_magic/shackles"
 
 /datum/action/innate/cult/blood_spell/construction
-	name = "Извилистое конструирование"
+	name = "Искаженное строительство"
 	desc = "Заряжает твою руку магией искажения металла.<br><u>Превращает:</u><br>Пласталь в рунический металл<br>50 металла в оболочку культистов<br>Живых киборгов в оболочки после определённого времени<br>Оболочки боргов в оболочки культистов<br>Шлюзы в непрочные рунические шлюзы после определённого времени(намерение вреда)"
 	button_icon_state = "transmute"
 	magic_path = "/obj/item/melee/blood_magic/construction"
@@ -554,7 +554,7 @@
 
 //Construction: Converts 50 iron to a construct shell, plasteel to runed metal, airlock to brittle runed airlock, a borg to a construct, or borg shell to a construct shell
 /obj/item/melee/blood_magic/construction
-	name = "Извилистая аура"
+	name = "Искаженная аура"
 	desc = "Искажает некоторые металлические предметы при контакте."
 	invocation = "Ethra p'ni dedol!"
 	color = "#000000" // black
@@ -571,7 +571,7 @@
 /obj/item/melee/blood_magic/construction/afterattack(atom/target, mob/user, proximity_flag, click_parameters)
 	if(proximity_flag && iscultist(user))
 		if(channeling)
-			to_chat(user, span_cultitalic("Я уже пробуждаю извилистое конструирование!"))
+			to_chat(user, span_cultitalic("Я уже пробуждаю искаженное строительство!"))
 			return
 		var/turf/T = get_turf(target)
 		if(istype(target, /obj/item/stack/sheet/iron))
@@ -688,8 +688,8 @@
 		..()
 
 /obj/item/melee/blood_magic/manipulator
-	name = "Аура кровавого ритуала"
-	desc = "Впитывает кровь там, где коснёшься. Прикосновения к культистам и оболочкам будут их лечить. Используй в руке, чтобы произвести продвинутый ритуал."
+	name = "Аура ритаула крови"
+	desc = "Впитывает кровь в месте прикосновения. Прикосновения к культистам и оболочкам будут их лечить. Используй в руке, чтобы произвести продвинутый ритуал."
 	color = "#7D1717"
 
 /obj/item/melee/blood_magic/manipulator/examine(mob/user)
@@ -701,7 +701,7 @@
 		if(ishuman(target))
 			var/mob/living/carbon/human/H = target
 			if(NOBLOOD in H.dna.species.species_traits)
-				to_chat(user,span_warning("Кровавые ритуалы не работают с тем, у чего нет крови!"))
+				to_chat(user,span_warning("Ритуалы крови не работают с тем, у кого нет крови!"))
 				return
 			if(iscultist(H))
 				if(H.stat == DEAD)
@@ -717,7 +717,7 @@
 					else
 						H.blood_volume = BLOOD_VOLUME_SAFE
 						uses -= round(restore_blood/2)
-						to_chat(user,span_warning("Мои кровавые ритуалы восстановили [H == user ? "your" : "[H.ru_ego()]"] крови до безопасного уровня!"))
+						to_chat(user,span_warning("Мои ритуалы восстановили кровь [H == user ? "your" : "[H.ru_ego()]"] до безопасного уровня!"))
 				var/overall_damage = H.getBruteLoss() + H.getFireLoss() + H.getToxLoss() + H.getOxyLoss()
 				if(overall_damage == 0)
 					to_chat(user,span_cult("Этому культисту не нужно лечение!"))
@@ -797,7 +797,7 @@
 			user.Beam(T,icon_state="drainbeam", time = 15)
 			new /obj/effect/temp_visual/cult/sparks(get_turf(user))
 			playsound(T, 'sound/magic/enter_blood.ogg', 50)
-			to_chat(user, span_cultitalic("Мой кровавый ритуал принёс [round(temp)] очков крови из источников вокруг!"))
+			to_chat(user, span_cultitalic("Мой ритуал крови принёс [round(temp)] очков крови из источников вокруг!"))
 			uses += max(1, round(temp))
 
 /obj/item/melee/blood_magic/manipulator/attack_self(mob/living/user)
@@ -809,7 +809,7 @@
 			)
 		var/choice = show_radial_menu(user, src, spells, custom_check = CALLBACK(src, .proc/check_menu, user), require_near = TRUE)
 		if(!check_menu(user))
-			to_chat(user, span_cultitalic("Решаю не проводить великий кровавый ритуал."))
+			to_chat(user, span_cultitalic("Решаю не проводить великий ритуал крови."))
 			return
 		switch(choice)
 			if("Кровавая алебадра (150)")
